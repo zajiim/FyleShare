@@ -11,7 +11,11 @@ import androidx.compose.ui.Modifier
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
 
-    Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text("Home Screen")
     }
 }
