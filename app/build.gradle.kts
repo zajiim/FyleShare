@@ -63,6 +63,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     // KotlinX Serialization
     implementation(libs.kotlinx.serialization.json)
+    //DataStore Preferences
+    implementation(libs.androidx.datastore.preferences)
+
 
 
     testImplementation(libs.junit)

@@ -6,19 +6,27 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fyndr.fileshare.presentation.home.HomeScreen
+import com.fyndr.fileshare.presentation.onboarding.OnboardingScreen
 
 @Composable
 fun FyleShareNavGraph(
     modifier: Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    isOnboardingCompleted: Boolean = false
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destinations.Home
+        startDestination = if (isOnboardingCompleted) Destinations.Home else Destinations.Onboarding
     ) {
+
         composable<Destinations.Home> {
             HomeScreen(modifier = modifier)
         }
+
+        composable<Destinations.Onboarding> {
+            OnboardingScreen(modifier = modifier)
+        }
+
     }
 
 }

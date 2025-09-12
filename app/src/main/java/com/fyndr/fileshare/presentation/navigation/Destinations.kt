@@ -6,4 +6,7 @@ import kotlinx.serialization.Serializable
 sealed class Destinations() {
     @Serializable
     object Home : Destinations()
+
+    @Serializable
+    object Onboarding : Destinations()
 }
