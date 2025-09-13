@@ -20,8 +20,10 @@ class MainActivityViewModel @Inject constructor(
     val state: StateFlow<MainActivityStates> = _state.asStateFlow()
 
     init {
+        _state.value = _state.value.copy(isLoading = true)
+
         readOnboardingUseCase().onEach { completed ->
-            _state.value = _state.value.copy(isOnboardingCompleted = completed)
+            _state.value = _state.value.copy(isOnboardingCompleted = completed, isLoading = false)
         }.launchIn(viewModelScope)
     }
 }

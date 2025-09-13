@@ -10,9 +10,7 @@ import com.fyndr.fileshare.presentation.onboarding.OnboardingScreen
 
 @Composable
 fun FyleShareNavGraph(
-    modifier: Modifier,
-    navController: NavHostController,
-    isOnboardingCompleted: Boolean = false
+    modifier: Modifier, navController: NavHostController, isOnboardingCompleted: Boolean = false
 ) {
     NavHost(
         navController = navController,
@@ -25,16 +23,14 @@ fun FyleShareNavGraph(
 
         composable<Destinations.Onboarding> {
             OnboardingScreen(
-                modifier = modifier,
-                onWelcomeClicked = {
+                modifier = modifier, onWelcomeClicked = {
                     navController.navigate(Destinations.Home) {
                         popUpTo(Destinations.Onboarding) {
                             inclusive = true
                         }
                     }
-                })
+                }
+            )
         }
-
     }
-
 }

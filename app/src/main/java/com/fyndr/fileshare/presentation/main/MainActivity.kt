@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
+import com.fyndr.fileshare.presentation.main.components.LoadingScreen
 import com.fyndr.fileshare.presentation.navigation.FyleShareNavGraph
 import com.fyndr.fileshare.ui.theme.FileShareTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,12 +30,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.Companion.fillMaxSize()
                 ) { innerPadding ->
                     val navController = rememberNavController()
-                    val isOnboardingCompleted = mainActivityViewModel.state.collectAsState()
-                    FyleShareNavGraph(
-                        modifier = Modifier.Companion.padding(innerPadding),
-                        navController = navController,
-                        isOnboardingCompleted = isOnboardingCompleted.value.isOnboardingCompleted
-                    )
+                    val state by mainActivityViewModel.state.collectAsState()
+                    if (state.isLoading) {
+                        LoadingScreen(modifier = Modifier.padding(innerPadding))
+                    } else {
+                        FyleShareNavGraph(
+                            modifier = Modifier.padding(innerPadding),
+                            navController = navController,
+                            isOnboardingCompleted = state.isOnboardingCompleted
+                        )
+                    }
                 }
             }
         }
