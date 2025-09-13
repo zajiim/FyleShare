@@ -1,3 +1,5 @@
 package com.fyndr.fileshare.presentation.onboarding
 
-sealed class OnBoardingState {}
+sealed class OnBoardingEvents {
+    data object SaveOnBoardingEvent : OnBoardingEvents()
+}

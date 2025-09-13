@@ -24,7 +24,15 @@ fun FyleShareNavGraph(
         }
 
         composable<Destinations.Onboarding> {
-            OnboardingScreen(modifier = modifier)
+            OnboardingScreen(
+                modifier = modifier,
+                onWelcomeClicked = {
+                    navController.navigate(Destinations.Home) {
+                        popUpTo(Destinations.Onboarding) {
+                            inclusive = true
+                        }
+                    }
+                })
         }
 
     }

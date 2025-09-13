@@ -15,7 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import com.fyndr.fileshare.presentation.navigation.FyleShareNavGraph
 import com.fyndr.fileshare.ui.theme.FileShareTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {

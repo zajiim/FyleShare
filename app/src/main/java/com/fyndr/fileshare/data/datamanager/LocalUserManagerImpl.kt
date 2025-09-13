@@ -11,8 +11,9 @@ import com.fyndr.fileshare.utils.Constants.FYLESHARE_DATASTORE
 import com.fyndr.fileshare.utils.Constants.FYLESHARE_ONBOARDING_COMPLETED
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class LocalUserManagerImpl(
+class LocalUserManagerImpl @Inject constructor(
     private val context: Context
 ): LocalUserManager {
     override suspend fun saveOnBoardingState(value: Boolean) {
@@ -30,8 +31,7 @@ class LocalUserManagerImpl(
 
 }
 
-
-private val Context.fyleShareDataStore: DataStore<Preferences> by preferencesDataStore(name = FYLESHARE_DATASTORE)
+val Context.fyleShareDataStore: DataStore<Preferences> by preferencesDataStore(name = FYLESHARE_DATASTORE)
 
 
 private object PreferencesKeys {
