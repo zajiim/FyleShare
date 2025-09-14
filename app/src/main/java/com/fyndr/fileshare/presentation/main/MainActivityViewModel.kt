@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val readOnboardingUseCase: ReadOnboardingUseCase
+    readOnboardingUseCase: ReadOnboardingUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainActivityStates())

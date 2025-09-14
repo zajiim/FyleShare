@@ -11,8 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.fyndr.fileshare.ui.theme.DarkGray
-import com.fyndr.fileshare.ui.theme.Red
+import com.fyndr.fileshare.ui.theme.DarkBackground
 
 @Composable
 fun OnboardingScreen(
@@ -24,7 +23,7 @@ fun OnboardingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Red),
+            .background(DarkBackground),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

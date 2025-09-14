@@ -10,12 +10,26 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
+// Primary Dark Theme Colors
+val DarkBackground = Color(0xFF121212)
+val DarkSurface = Color(0xFF1E1E1E)
+val DarkSurfaceVariant = Color(0xFF2A2A2A)
+val DarkOnBackground = Color(0xFFE6E6E6)
+val DarkOnSurface = Color(0xFFE1E1E1)
+
+// Accent Colors for File Sharing Actions
 val PrimaryBlue = Color(0xFF3A86FF)
-val BackGroundColor = Color(0xFFF1F1F1)
-val LightGray = Color(0xFFB0B0B0)
-val DarkGray = Color(0xFF3A3A3A)
-val LightBlue = Color(0xFFEAF3FF)
-val Green = Color(0xFF4CAF50)
-val Red = Color(0xFFF44336)
-val Yellow = Color(0xFFFFC107)
-val Orange = Color(0xFFFF5722)
+val SecondaryTeal = Color(0xFF06D6A0)
+val TertiaryOrange = Color(0xFFFFB84D)
+val ErrorRed = Color(0xFFFF6B6B)
+
+// Avatar/User Colors (matching the design)
+val AvatarPink = Color(0xFFFF6B9D)
+val AvatarGreen = Color(0xFF4ECDC4)
+val AvatarYellow = Color(0xFFFFE66D)
+val AvatarBlue = Color(0xFF4D96FF)
+
+// Surface elevation colors for dark theme
+val SurfaceElevation1 = Color(0xFF1F1F1F)
+val SurfaceElevation2 = Color(0xFF232323)
+val SurfaceElevation3 = Color(0xFF282828)
