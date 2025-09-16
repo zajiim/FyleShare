@@ -9,4 +9,7 @@ sealed class Destinations() {
 
     @Serializable
     object Onboarding : Destinations()
+
+    @Serializable
+    object SendOrReceive : Destinations()
 }

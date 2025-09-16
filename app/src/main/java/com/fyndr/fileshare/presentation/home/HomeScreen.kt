@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,7 +33,11 @@ import com.fyndr.fileshare.ui.theme.DarkBackground
 import com.fyndr.fileshare.ui.theme.DarkSurface
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    onSendClick: () -> Unit = {},
+    onReceiveClick: () -> Unit = {}
+    ) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -53,7 +56,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         CustomButton(
             text = "Send",
-            onClick = {}
+            onClick = onSendClick
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -61,7 +64,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         CustomButton(
             text = "Receive",
-            onClick = {}
+            onClick = onReceiveClick
         )
         Spacer(modifier = Modifier.weight(1f))
 
