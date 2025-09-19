@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fyndr.fileshare.presentation.home.HomeScreen
+import com.fyndr.fileshare.presentation.name_screen.NameScreen
 import com.fyndr.fileshare.presentation.onboarding.OnboardingScreen
 import com.fyndr.fileshare.presentation.send_or_receive.SendOrReceiveScreen
 
@@ -19,7 +20,7 @@ fun FyleShareNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = if (isOnboardingCompleted) Destinations.Home else Destinations.Onboarding,
+        startDestination = if (isOnboardingCompleted) Destinations.Home else Destinations.NamingScreen,
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)
@@ -54,12 +55,25 @@ fun FyleShareNavGraph(
         composable<Destinations.Onboarding> {
             OnboardingScreen(
                 modifier = modifier, onWelcomeClicked = {
-                    navController.navigate(Destinations.Home) {
+                    navController.navigate(Destinations.NamingScreen) {
                         popUpTo(Destinations.Onboarding) {
                             inclusive = true
                         }
                     }
                 })
+        }
+
+        composable<Destinations.NamingScreen> {
+            NameScreen(
+                modifier = modifier,
+                onNameSubmitted = {
+                    navController.navigate(Destinations.Home) {
+                        popUpTo(Destinations.NamingScreen) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
 
         composable<Destinations.SendOrReceive> {

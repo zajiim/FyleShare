@@ -6,4 +6,7 @@ interface LocalUserManager {
     suspend fun saveOnBoardingState(value: Boolean)
 
     fun readOnBoardingState(): Flow<Boolean>
+
+
+
 }
