@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fyndr.fileshare.domain.home.models.itemList
+import com.fyndr.fileshare.presentation.components.UserAvatar
 import com.fyndr.fileshare.presentation.home.components.CustomButton
 import com.fyndr.fileshare.presentation.home.components.CustomMediaItem
 import com.fyndr.fileshare.ui.theme.DarkBackground
@@ -37,21 +39,36 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onSendClick: () -> Unit = {},
     onReceiveClick: () -> Unit = {}
-    ) {
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(DarkBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = "Fyle Share",
-            style = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                color = MaterialTheme.colorScheme.onPrimary
-            ),
-        )
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+        ) {
+            UserAvatar(
+                name = "Something",
+                color = MaterialTheme.colorScheme.primary,
+                size = 32.dp,
+                shouldShowName = false,
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
+            Text(
+                text = "Fyle Share",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+
+
         Spacer(modifier = Modifier.weight(1f))
 
         CustomButton(
