@@ -1,5 +1,6 @@
 package com.fyndr.fileshare.presentation.send_or_receive
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
 import com.fyndr.fileshare.presentation.components.UserAvatar
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SendOrReceiveScreen(
     modifier: Modifier = Modifier, avatarPositions: List<AvatarPosition> = getSampleAvatars()

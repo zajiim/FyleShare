@@ -1,5 +1,8 @@
 package com.fyndr.fileshare.presentation.components
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -36,9 +39,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun UserAvatar(
-    modifier: Modifier = Modifier,
+    modifiesr: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedVisibilityScope: AnimatedVisibilityScope? = null,
     name: String,
     color: Color,
     size: Dp,
@@ -59,7 +65,7 @@ fun UserAvatar(
     var shouldScale by remember { mutableStateOf(false) }
 
     val scale by animateFloatAsState(
-        targetValue = if (shouldScale) 15f else 1f,
+        targetValue = if (shouldScale) 1.5f else 1f,
         animationSpec = tween(
             durationMillis = 300,
             easing = FastOutSlowInEasing
@@ -105,7 +111,21 @@ fun UserAvatar(
         Box(
             modifier = Modifier
                 .size(size)
-                .graphicsLayer {
+                .let { baseModifier ->
+                    if(sharedTransitionScope != null && animatedVisibilityScope != null) {
+                        with(sharedTransitionScope) {
+                            baseModifier.sharedElement(
+                                sharedContentState = rememberSharedContentState(key = "user_avatar"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    tween(durationMillis = 800, easing = FastOutSlowInEasing)
+                                }
+                            )
+                        }
+                    } else {
+                        baseModifier
+                    }
+                }.graphicsLayer {
                     scaleX = scale
                     scaleY = scale
                 },

@@ -1,5 +1,8 @@
 package com.fyndr.fileshare.presentation.name_screen
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,10 +29,13 @@ import com.fyndr.fileshare.presentation.components.UserAvatar
 import com.fyndr.fileshare.ui.theme.DarkBackground
 import com.fyndr.fileshare.utils.VSpacer
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NameScreen(
     modifier: Modifier = Modifier,
     viewModel: NameScreenViewModel = hiltViewModel(),
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onNameSubmitted: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsState()
@@ -50,6 +56,8 @@ fun NameScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally),
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = animatedVisibilityScope,
             name = state.value.name,
             color = MaterialTheme.colorScheme.primary,
             size = 100.dp,
@@ -99,12 +107,4 @@ fun NameScreen(
             }
         }
     }
-
-}
-
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun PreviewNameScreen() {
-    NameScreen(modifier = Modifier.safeDrawingPadding())
 }

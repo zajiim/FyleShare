@@ -1,5 +1,8 @@
 package com.fyndr.fileshare.presentation.home
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,9 +37,12 @@ import com.fyndr.fileshare.presentation.home.components.CustomMediaItem
 import com.fyndr.fileshare.ui.theme.DarkBackground
 import com.fyndr.fileshare.ui.theme.DarkSurface
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onSendClick: () -> Unit = {},
     onReceiveClick: () -> Unit = {}
 ) {
@@ -52,6 +58,8 @@ fun HomeScreen(
         ) {
             UserAvatar(
                 name = "Something",
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
                 color = MaterialTheme.colorScheme.primary,
                 size = 32.dp,
                 shouldShowName = false,
@@ -124,19 +132,4 @@ fun HomeScreen(
 
     }
 }
-
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewHomeScreen() {
-    HomeScreen()
-}
-
-@Preview
-@Composable
-private fun CustomButtonPreview() {
-    CustomButton(text = "Sample") {
-    }
-}
-
 

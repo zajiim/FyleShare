@@ -1,6 +1,8 @@
 package com.fyndr.fileshare.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,76 +14,82 @@ import com.fyndr.fileshare.presentation.name_screen.NameScreen
 import com.fyndr.fileshare.presentation.onboarding.OnboardingScreen
 import com.fyndr.fileshare.presentation.send_or_receive.SendOrReceiveScreen
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun FyleShareNavGraph(
     modifier: Modifier,
     navController: NavHostController,
     isOnboardingCompleted: Boolean = false,
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = if (isOnboardingCompleted) Destinations.Home else Destinations.NamingScreen,
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)
-            )
-        }, exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)
-            )
-        }, popEnterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)
-            )
-        }, popExitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)
-            )
-        }
-    ) {
+    SharedTransitionLayout {
+        NavHost(
+            navController = navController,
+            startDestination = if (isOnboardingCompleted) Destinations.Home else Destinations.NamingScreen,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)
+                )
+            }, exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)
+                )
+            }, popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)
+                )
+            }, popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)
+                )
+            }
+        ) {
 
-        composable<Destinations.Home> {
-            HomeScreen(
-                modifier = modifier,
-                onSendClick = {
-                    navController.navigate(Destinations.SendOrReceive)
-                },
-                onReceiveClick = {
-                    navController.navigate(Destinations.SendOrReceive)
-                }
-            )
-        }
+            composable<Destinations.Home> {
+                HomeScreen(
+                    modifier = modifier,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedVisibilityScope = this,
+                    onSendClick = {
+                        navController.navigate(Destinations.SendOrReceive)
+                    },
+                    onReceiveClick = {
+                        navController.navigate(Destinations.SendOrReceive)
+                    }
+                )
+            }
 
-        composable<Destinations.Onboarding> {
-            OnboardingScreen(
-                modifier = modifier, onWelcomeClicked = {
-                    navController.navigate(Destinations.NamingScreen) {
-                        popUpTo(Destinations.Onboarding) {
-                            inclusive = true
+            composable<Destinations.Onboarding> {
+                OnboardingScreen(
+                    modifier = modifier, onWelcomeClicked = {
+                        navController.navigate(Destinations.NamingScreen) {
+                            popUpTo(Destinations.Onboarding) {
+                                inclusive = true
+                            }
+                        }
+                    })
+            }
+
+            composable<Destinations.NamingScreen> {
+                NameScreen(
+                    modifier = modifier,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedVisibilityScope = this,
+                    onNameSubmitted = {
+                        navController.navigate(Destinations.Home) {
+                            popUpTo(Destinations.NamingScreen) {
+                                inclusive = true
+                            }
                         }
                     }
-                })
+                )
+            }
+
+            composable<Destinations.SendOrReceive> {
+                SendOrReceiveScreen(
+                    modifier = modifier
+                )
+            }
+
         }
-
-        composable<Destinations.NamingScreen> {
-            NameScreen(
-                modifier = modifier,
-                onNameSubmitted = {
-                    navController.navigate(Destinations.Home) {
-                        popUpTo(Destinations.NamingScreen) {
-                            inclusive = true
-                        }
-                    }
-                }
-            )
-        }
-
-        composable<Destinations.SendOrReceive> {
-            SendOrReceiveScreen(
-                modifier = modifier
-            )
-        }
-
-
     }
 }
