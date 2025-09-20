@@ -8,49 +8,32 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import kotlin.math.cos
-import kotlin.math.sin
+import com.fyndr.fileshare.presentation.components.UserAvatar
 
 @Composable
 fun SendOrReceiveScreen(
-    modifier: Modifier = Modifier,
-    avatarPositions: List<AvatarPosition> = getSampleAvatars()
+    modifier: Modifier = Modifier, avatarPositions: List<AvatarPosition> = getSampleAvatars()
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "radar_rotation")
     val angle by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(6000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "radar_sweep"
+        initialValue = 0f, targetValue = 360f, animationSpec = infiniteRepeatable(
+            animation = tween(6000, easing = LinearEasing), repeatMode = RepeatMode.Restart
+        ), label = "radar_sweep"
     )
 
     Box(
@@ -64,8 +47,7 @@ fun SendOrReceiveScreen(
                         Color(0xFF0D0D0D),
                     )
                 )
-            ),
-        contentAlignment = Alignment.Center
+            ), contentAlignment = Alignment.Center
     ) {
         Canvas(
             modifier = Modifier.fillMaxSize()
@@ -94,9 +76,7 @@ fun SendOrReceiveScreen(
                         Color(0x33FFFFFF), // Very dim
                         Color(0x11FFFFFF), // Almost transparent
                         Color.Transparent  // Completely transparent at edge
-                    ),
-                    center = center,
-                    radius = maxRadius
+                    ), center = center, radius = maxRadius
                 )
 
                 // Draw the main torch sector
@@ -154,6 +134,7 @@ fun SendOrReceiveScreen(
             UserAvatar(
                 name = avatarPos.name,
                 color = avatarPos.color,
+                size = 50.dp,
                 modifier = Modifier
                     .offset(avatarPos.x.dp, avatarPos.y.dp)
                     .size(60.dp)
@@ -163,100 +144,24 @@ fun SendOrReceiveScreen(
 }
 
 
-@Composable
-fun UserAvatar(
-    name: String,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(color)
-                .border(3.dp, Color.White, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = name.take(1).uppercase(),
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = name,
-            color = Color.White,
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-
 data class AvatarPosition(
-    val name: String,
-    val color: Color,
-    val x: Int,
-    val y: Int
+    val name: String, val color: Color, val x: Int, val y: Int
 )
 
 
 fun getSampleAvatars(): List<AvatarPosition> {
     return listOf(
         AvatarPosition(
-            name = "Justin",
-            color = Color(0xFFFF6B9D),
-            x = -120,
-            y = -80
-        ),
-        AvatarPosition(
-            name = "Roger",
-            color = Color(0xFFFFE66D),
-            x = 110,
-            y = -60
-        ),
-        AvatarPosition(
-            name = "Marilyn",
-            color = Color(0xFF4ECDC4),
-            x = -90,
-            y = 100
-        ),
-        AvatarPosition(
-            name = "Alex",
-            color = Color(0xFF6C5CE7),
-            x = 80,
-            y = 120
-        ),
-        AvatarPosition(
-            name = "Sarah",
-            color = Color(0xFF00B894),
-            x = -140,
-            y = 30
-        ),
-//        AvatarPosition(
-//            name = "Mike",
-//            color = Color(0xFFE17055),
-//            x = 50,
-//            y = -140
-//        ),
-//        AvatarPosition(
-//            name = "Lisa",
-//            color = Color(0xFF74B9FF),
-//            x = 0,
-//            y = 160
-//        ),
-//        AvatarPosition(
-//            name = "David",
-//            color = Color(0xFFFD79A8),
-//            x = -60,
-//            y = -130
-//        )
+            name = "Justin", color = Color(0xFFFF6B9D), x = -120, y = -80
+        ), AvatarPosition(
+            name = "Roger", color = Color(0xFFFFE66D), x = 110, y = -60
+        ), AvatarPosition(
+            name = "Marilyn", color = Color(0xFF4ECDC4), x = -90, y = 100
+        ), AvatarPosition(
+            name = "Alex", color = Color(0xFF6C5CE7), x = 80, y = 120
+        ), AvatarPosition(
+            name = "Sarah", color = Color(0xFF00B894), x = -140, y = 30
+        )
     )
 }
 

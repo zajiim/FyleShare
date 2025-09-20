@@ -65,6 +65,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     //DataStore Preferences
     implementation(libs.androidx.datastore.preferences)
+    // Room
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
 
 
 

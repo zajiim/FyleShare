@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.fyndr.fileshare.domain.datamanager.LocalUserManager
 import com.fyndr.fileshare.utils.Constants.FYLESHARE_DATASTORE
+import com.fyndr.fileshare.utils.Constants.FYLESHARE_NAME_SAVING_COMPLETED
 import com.fyndr.fileshare.utils.Constants.FYLESHARE_ONBOARDING_COMPLETED
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,13 +23,23 @@ class LocalUserManagerImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveNameState(value: Boolean) {
+        context.fyleShareDataStore.edit { prefs ->
+            prefs[PreferencesKeys.SAVED_NAME_VALUE] = value
+        }
+    }
+
     override fun readOnBoardingState(): Flow<Boolean> {
         return context.fyleShareDataStore.data.map { prefs ->
             prefs[PreferencesKeys.ON_BOARDING_VALUE] ?: false
         }
     }
 
-
+    override fun readNameState(): Flow<Boolean> {
+        return context.fyleShareDataStore.data.map { prefs ->
+            prefs[PreferencesKeys.SAVED_NAME_VALUE] ?: false
+        }
+    }
 }
 
 val Context.fyleShareDataStore: DataStore<Preferences> by preferencesDataStore(name = FYLESHARE_DATASTORE)
@@ -36,5 +47,7 @@ val Context.fyleShareDataStore: DataStore<Preferences> by preferencesDataStore(n
 
 private object PreferencesKeys {
     val ON_BOARDING_VALUE = booleanPreferencesKey(name = FYLESHARE_ONBOARDING_COMPLETED)
+
+    val SAVED_NAME_VALUE = booleanPreferencesKey(name = FYLESHARE_NAME_SAVING_COMPLETED)
 }
 
