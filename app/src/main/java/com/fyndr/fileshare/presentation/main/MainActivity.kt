@@ -50,7 +50,8 @@ class MainActivity : ComponentActivity() {
                         FyleShareNavGraph(
                             modifier = Modifier.padding(innerPadding),
                             navController = navController,
-                            isOnboardingCompleted = state.isOnboardingCompleted
+                            isOnboardingCompleted = state.isOnboardingCompleted,
+                            isNameSaved = state.isNameSaved
                         )
                     }
                 }

@@ -20,11 +20,16 @@ fun FyleShareNavGraph(
     modifier: Modifier,
     navController: NavHostController,
     isOnboardingCompleted: Boolean = false,
+    isNameSaved: Boolean = false
 ) {
     SharedTransitionLayout {
         NavHost(
             navController = navController,
-            startDestination = if (isOnboardingCompleted) Destinations.Home else Destinations.NamingScreen,
+            startDestination = when {
+                !isOnboardingCompleted -> Destinations.Onboarding
+                !isNameSaved -> Destinations.NamingScreen
+                else -> Destinations.Home
+            },
             enterTransition = {
                 slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)

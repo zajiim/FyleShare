@@ -61,6 +61,7 @@ fun NameScreen(
             name = state.value.name,
             color = MaterialTheme.colorScheme.primary,
             size = 100.dp,
+            shouldShowName = false,
             isLoading = state.value.isLoading,
             onAnimationComplete = {
                 viewModel.onEvent(NameScreenEvents.OnAnimationComplete)
