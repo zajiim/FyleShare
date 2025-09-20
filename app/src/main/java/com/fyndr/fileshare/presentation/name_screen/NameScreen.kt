@@ -51,7 +51,7 @@ fun NameScreen(
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally),
             name = state.value.name,
-            color = Color.Red,
+            color = MaterialTheme.colorScheme.primary,
             size = 100.dp,
             isLoading = state.value.isLoading,
             onAnimationComplete = {
@@ -76,14 +76,14 @@ fun NameScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent, // Remove underline when focused
-                    unfocusedIndicatorColor = Color.Transparent, // Remove underline when not focused
-                    disabledIndicatorColor = Color.Transparent, // Remove underline when disabled
-                    focusedContainerColor = Color.LightGray.copy(alpha = 0.8f), // Darker background when focused
-                    unfocusedContainerColor = Color.LightGray.copy(alpha = 0.6f), // Darker background when not focused
-                    cursorColor = MaterialTheme.colorScheme.primary, // Optional: customize cursor color
-                    focusedTextColor = Color.Black, // Optional: customize text color
-                    unfocusedTextColor = Color.Black // Optional: customize text color
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.LightGray.copy(alpha = 0.8f),
+                    unfocusedContainerColor = Color.LightGray.copy(alpha = 0.6f),
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 )
             )
         }
