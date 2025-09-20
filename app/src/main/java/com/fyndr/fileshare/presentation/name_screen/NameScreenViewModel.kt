@@ -2,9 +2,12 @@ package com.fyndr.fileshare.presentation.name_screen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "NameScreenViewModel"
@@ -20,10 +23,29 @@ class NameScreenViewModel @Inject constructor(
     fun onEvent(event: NameScreenEvents) {
         when(event) {
             is NameScreenEvents.OnNameChange -> {
-                _state.value = state.value.copy(name = event.name)
+                _state.value = _state.value.copy(name = event.name)
             }
             NameScreenEvents.OnSubmitClick -> {
                 Log.e(TAG, "submit click invoked: ", )
+                _state.value = _state.value.copy(isLoading = true)
+//                viewModelScope.launch {
+//                    delay(2500L)
+//                    _state.value = _state.value.copy(
+//                        isLoading = false,
+//                        shouldNavigate = true
+//                        )
+//                }
+            }
+
+            NameScreenEvents.OnNavigationDone -> {
+                _state.value = _state.value.copy(shouldNavigate = false)
+            }
+
+            NameScreenEvents.OnAnimationComplete -> {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    shouldNavigate = true
+                )
             }
         }
     }
