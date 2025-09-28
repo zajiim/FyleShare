@@ -2,13 +2,12 @@ package com.fyndr.fileshare.presentation.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fyndr.fileshare.domain.use_cases.onboarding.OnBoardingUseCases
+import com.fyndr.fileshare.domain.on_boarding.use_cases.onboarding.OnBoardingUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

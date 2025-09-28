@@ -78,14 +78,7 @@ fun FyleShareNavGraph(
                 NameScreen(
                     modifier = modifier,
                     sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedVisibilityScope = this,
-                    onNameSubmitted = {
-                        navController.navigate(Destinations.Home) {
-                            popUpTo(Destinations.NamingScreen) {
-                                inclusive = true
-                            }
-                        }
-                    }
+                    animatedVisibilityScope = this
                 )
             }
 

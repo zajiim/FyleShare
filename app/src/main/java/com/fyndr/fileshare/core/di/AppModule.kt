@@ -12,10 +12,15 @@ import com.fyndr.fileshare.data.naming.local.dao.UserNameDAO
 import com.fyndr.fileshare.data.naming.repository.UserRepositoryImpl
 import com.fyndr.fileshare.domain.datamanager.LocalUserManager
 import com.fyndr.fileshare.domain.naming.repository.UserRepository
+import com.fyndr.fileshare.domain.naming.use_case.GetUserNameUseCase
+import com.fyndr.fileshare.domain.naming.use_case.NamingUseCases
+import com.fyndr.fileshare.domain.naming.use_case.ReadNameStateUseCase
+import com.fyndr.fileshare.domain.naming.use_case.SaveNameStateUseCase
 import com.fyndr.fileshare.domain.naming.use_case.SaveUserNameUseCase
-import com.fyndr.fileshare.domain.use_cases.onboarding.OnBoardingUseCases
-import com.fyndr.fileshare.domain.use_cases.onboarding.ReadOnboardingUseCase
-import com.fyndr.fileshare.domain.use_cases.onboarding.SaveOnboardingUseCase
+import com.fyndr.fileshare.domain.on_boarding.use_cases.onboarding.OnBoardingUseCases
+import com.fyndr.fileshare.domain.on_boarding.use_cases.onboarding.ReadOnboardingUseCase
+import com.fyndr.fileshare.domain.on_boarding.use_cases.onboarding.SaveOnboardingUseCase
+import com.fyndr.fileshare.domain.send_or_receive.use_cases.GetUserDetailsUseCase
 import com.fyndr.fileshare.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -65,14 +70,27 @@ object AppModule {
         localUserManager: LocalUserManager
     ): SaveOnboardingUseCase = SaveOnboardingUseCase(localUserManager)
 
+    @Provides
+    fun providesReadNameStateUseCase(localUserManager: LocalUserManager): ReadNameStateUseCase {
+        return ReadNameStateUseCase(localUserManager)
+    }
+
+    @Provides
+    fun providesSaveNameStateUseCase(localUserManager: LocalUserManager): SaveNameStateUseCase {
+        return SaveNameStateUseCase(localUserManager)
+    }
 
     @Provides
     fun provideOnBoardingUseCases(
         readOnboardingUseCase: ReadOnboardingUseCase,
-        saveOnboardingUseCase: SaveOnboardingUseCase
+        saveOnboardingUseCase: SaveOnboardingUseCase,
+        readNameStateUseCase: ReadNameStateUseCase,
+        saveNameStateUseCase: SaveNameStateUseCase,
     ): OnBoardingUseCases = OnBoardingUseCases(
         readOnboardingUseCase = readOnboardingUseCase,
-        saveOnboardingUseCase = saveOnboardingUseCase
+        saveOnboardingUseCase = saveOnboardingUseCase,
+        readNameStateUseCase = readNameStateUseCase,
+        saveNameStateUseCase = saveNameStateUseCase,
     )
 
 
@@ -94,10 +112,41 @@ object AppModule {
         return UserRepositoryImpl(dao)
     }
 
+    //Send or receive UserRepository
+    @Provides
+    @Singleton
+    fun provideUserDetailsRepository(dao: UserNameDAO): com.fyndr.fileshare.domain.send_or_receive.repository.UserRepository {
+        return com.fyndr.fileshare.data.send_or_receive.repository.UserRepositoryImpl(dao)
+    }
+
     @Provides
     @Singleton
     fun providesSaveUserNameUseCase(repository: UserRepository): SaveUserNameUseCase {
         return SaveUserNameUseCase(repository)
     }
+
+    @Provides
+    @Singleton
+    fun provideGetUserNameUseCase(repository: UserRepository): GetUserNameUseCase {
+        return GetUserNameUseCase(repository)
+    }
+
+    // Send or Receive GetUserDetailsUseCase
+
+    @Provides
+    @Singleton
+    fun provideGetUserDetailsUseCase(repository: com.fyndr.fileshare.domain.send_or_receive.repository.UserRepository): GetUserDetailsUseCase {
+        return GetUserDetailsUseCase(repository)
+    }
+
+
+    @Provides
+    fun provideNamingUseCases(
+        getUserNameUseCase: GetUserNameUseCase,
+        saveUserNameUseCase: SaveUserNameUseCase,
+    ): NamingUseCases = NamingUseCases (
+        getUserNameUseCase = getUserNameUseCase,
+        saveUserNameUseCase = saveUserNameUseCase,
+    )
 
 }

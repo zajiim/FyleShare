@@ -1,5 +1,6 @@
 package com.fyndr.fileshare.presentation.send_or_receive
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,19 +26,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.fyndr.fileshare.presentation.components.UserAvatar
 
+private const val TAG = "SendOrReceiveScreen"
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SendOrReceiveScreen(
-    modifier: Modifier = Modifier, avatarPositions: List<AvatarPosition> = getSampleAvatars()
+    modifier: Modifier = Modifier,
+    avatarPositions: List<AvatarPosition> = getSampleAvatars(),
+    viewModel: SendOrReceiveViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.collectAsState()
     val infiniteTransition = rememberInfiniteTransition(label = "radar_rotation")
     val angle by infiniteTransition.animateFloat(
-        initialValue = 0f, targetValue = 360f, animationSpec = infiniteRepeatable(
-            animation = tween(6000, easing = LinearEasing), repeatMode = RepeatMode.Restart
-        ), label = "radar_sweep"
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(6000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "radar_sweep"
     )
+    Log.e(TAG, "the username is ${state.value.currentUserName}: ")
 
     Box(
         modifier = modifier
@@ -68,69 +80,41 @@ fun SendOrReceiveScreen(
                 )
             }
 
-            rotate(angle, pivot = center) {
+            rotate(
+                degrees = angle,
+                pivot = center
+            ) {
                 val torchGradient = Brush.radialGradient(
                     colors = listOf(
-                        Color(0xFFFFFFFF), // Bright white at center
-                        Color(0xCCFFFFFF), // Slightly less bright
-                        Color(0x99FFFFFF), // Medium brightness
-                        Color(0x66FFFFFF), // Dimmer
-                        Color(0x33FFFFFF), // Very dim
-                        Color(0x11FFFFFF), // Almost transparent
-                        Color.Transparent  // Completely transparent at edge
-                    ), center = center, radius = maxRadius
+                        Color(0xFFFFFFFF),
+                        Color(0xCCFFFFFF),
+                        Color(0x99FFFFFF),
+                        Color(0x66FFFFFF),
+                        Color(0x33FFFFFF),
+                        Color(0x11FFFFFF),
+                        Color.Transparent
+                    ),
+                    center = center,
+                    radius = maxRadius
                 )
 
-                // Draw the main torch sector
                 drawArc(
                     brush = torchGradient,
-                    startAngle = -20f, // Narrower torch beam
-                    sweepAngle = 40f,  // 40-degree wide beam
+                    startAngle = -20f,
+                    sweepAngle = 40f,
                     useCenter = true,
                     topLeft = Offset(center.x - maxRadius, center.y - maxRadius),
                     size = Size(maxRadius * 2, maxRadius * 2)
                 )
-
-                // Add a bright center line for more realistic torch effect
-//                val lineAngle = Math.toRadians(angle.toDouble())
-//                val lineEnd = Offset(
-//                    center.x + maxRadius * cos(lineAngle).toFloat(),
-//                    center.y + maxRadius * sin(lineAngle).toFloat()
-//                )
-
-//                drawLine(
-//                    color = Color(0xFFFFFFFF),
-//                    start = center,
-//                    end = lineEnd,
-//                    strokeWidth = 4.dp.toPx(),
-//                    cap = StrokeCap.Round
-//                )
-
-//                val sideFadeGradient = Brush.radialGradient(
-//                    colors = listOf(
-//                        Color.Transparent, Color(0x22FFFFFF), Color(0x11FFFFFF), Color.Transparent
-//                    ), center = center, radius = maxRadius * 1.2f
-//                )
-
-//                drawArc(
-//                    brush = sideFadeGradient,
-//                    startAngle = -35f,
-//                    sweepAngle = 15f,
-//                    useCenter = true,
-//                    topLeft = Offset(center.x - maxRadius, center.y - maxRadius),
-//                    size = Size(maxRadius * 2, maxRadius * 2)
-//                )
-
-//                drawArc(
-//                    brush = sideFadeGradient,
-//                    startAngle = 20f,
-//                    sweepAngle = 15f,
-//                    useCenter = true,
-//                    topLeft = Offset(center.x - maxRadius, center.y - maxRadius),
-//                    size = Size(maxRadius * 2, maxRadius * 2)
-//                )
             }
         }
+
+        UserAvatar(
+            name = state.value.currentUserName,
+            color = Color(0xFF40C4FF),
+            size = 60.dp,
+            shouldShowName = false
+        )
 
         avatarPositions.forEach { avatarPos ->
             UserAvatar(
@@ -155,13 +139,17 @@ fun getSampleAvatars(): List<AvatarPosition> {
     return listOf(
         AvatarPosition(
             name = "Justin", color = Color(0xFFFF6B9D), x = -120, y = -80
-        ), AvatarPosition(
+        ),
+        AvatarPosition(
             name = "Roger", color = Color(0xFFFFE66D), x = 110, y = -60
-        ), AvatarPosition(
+        ),
+        AvatarPosition(
             name = "Marilyn", color = Color(0xFF4ECDC4), x = -90, y = 100
-        ), AvatarPosition(
+        ),
+        AvatarPosition(
             name = "Alex", color = Color(0xFF6C5CE7), x = 80, y = 120
-        ), AvatarPosition(
+        ),
+        AvatarPosition(
             name = "Sarah", color = Color(0xFF00B894), x = -140, y = 30
         )
     )

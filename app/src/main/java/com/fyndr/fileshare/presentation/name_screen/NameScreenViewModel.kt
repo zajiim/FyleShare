@@ -1,9 +1,8 @@
 package com.fyndr.fileshare.presentation.name_screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fyndr.fileshare.domain.datamanager.LocalUserManager
+import com.fyndr.fileshare.domain.naming.use_case.SaveNameStateUseCase
 import com.fyndr.fileshare.domain.naming.use_case.SaveUserNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -17,7 +16,7 @@ private const val TAG = "NameScreenViewModel"
 @HiltViewModel
 class NameScreenViewModel @Inject constructor(
     private val saveUserNameUseCase: SaveUserNameUseCase,
-    private val localUserManager: LocalUserManager
+    private val saveNameStateUseCase: SaveNameStateUseCase
 
 ): ViewModel() {
 
@@ -34,21 +33,10 @@ class NameScreenViewModel @Inject constructor(
                     _state.value = _state.value.copy(isLoading = true)
                     viewModelScope.launch {
                         saveUserNameUseCase(_state.value.name)
-                        localUserManager.saveNameState(true)
-                        _state.value = _state.value.copy(isLoading = false, shouldNavigate = true)
+                        saveNameStateUseCase(true)
+                        _state.value = _state.value.copy(isLoading = false)
                     }
                 }
-            }
-
-            NameScreenEvents.OnNavigationDone -> {
-                _state.value = _state.value.copy(shouldNavigate = false)
-            }
-
-            NameScreenEvents.OnAnimationComplete -> {
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    shouldNavigate = true
-                )
             }
         }
     }

@@ -3,7 +3,9 @@ package com.fyndr.fileshare.presentation.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyndr.fileshare.domain.datamanager.LocalUserManager
-import com.fyndr.fileshare.domain.use_cases.onboarding.ReadOnboardingUseCase
+import com.fyndr.fileshare.domain.naming.use_case.ReadNameStateUseCase
+import com.fyndr.fileshare.domain.on_boarding.use_cases.onboarding.OnBoardingUseCases
+import com.fyndr.fileshare.domain.on_boarding.use_cases.onboarding.ReadOnboardingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    readOnboardingUseCase: ReadOnboardingUseCase,
-    private val localUserManager: LocalUserManager
+    private val onboardingUseCase: OnBoardingUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainActivityStates())
@@ -28,8 +29,8 @@ class MainActivityViewModel @Inject constructor(
 
         viewModelScope.launch {
             combine(
-                readOnboardingUseCase(),
-                localUserManager.readNameState()
+                onboardingUseCase.readOnboardingUseCase(),
+                onboardingUseCase.readNameStateUseCase()
             ) { onboardingCompleted, nameSaved ->
                 Pair(onboardingCompleted, nameSaved)
             }.collect { (onboardingCompleted, nameSaved) ->
@@ -41,7 +42,7 @@ class MainActivityViewModel @Inject constructor(
             }
         }
 
-        readOnboardingUseCase().onEach { completed ->
+        onboardingUseCase.readOnboardingUseCase().onEach { completed ->
             _state.value = _state.value.copy(isOnboardingCompleted = completed, isLoading = false)
         }.launchIn(viewModelScope)
     }

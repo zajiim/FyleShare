@@ -50,7 +50,6 @@ fun UserAvatar(
     size: Dp,
     shouldShowName: Boolean = true,
     isLoading: Boolean = false,
-    onAnimationComplete: () -> Unit = {}
 ) {
 
     val progress by animateFloatAsState(
@@ -78,7 +77,6 @@ fun UserAvatar(
             delay(100)
             shouldScale = true
             delay(400)
-            onAnimationComplete()
         }
     }
 
