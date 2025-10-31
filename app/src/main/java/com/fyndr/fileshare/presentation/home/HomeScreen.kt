@@ -57,8 +57,8 @@ fun HomeScreen(
             .padding(horizontal = 20.dp)
         ) {
             UserAvatar(
-                name = "Something",
-                sharedTransitionScope = sharedTransitionScope,
+                name = "Jamba",
+                sharedTransitionScope  = sharedTransitionScope,
                 animatedVisibilityScope = animatedVisibilityScope,
                 color = MaterialTheme.colorScheme.primary,
                 size = 32.dp,
@@ -125,11 +125,8 @@ fun HomeScreen(
                     )
                 }
             }
-
-
         }
         Spacer(modifier = Modifier.weight(0.5f))
-
     }
 }
 
