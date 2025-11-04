@@ -10,10 +10,28 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,9 +43,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.fyndr.fileshare.domain.send_or_receive.models.ConnectionState
 import com.fyndr.fileshare.presentation.components.UserAvatar
+import com.fyndr.fileshare.presentation.send_or_receive.components.DeviceItem
+import com.fyndr.fileshare.presentation.send_or_receive.components.FilePicker
+import com.fyndr.fileshare.presentation.send_or_receive.components.FileShareControls
+import com.fyndr.fileshare.presentation.send_or_receive.components.formatFileSize
 
 private const val TAG = "SendOrReceiveScreen"
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -109,23 +134,173 @@ fun SendOrReceiveScreen(
             }
         }
 
-        UserAvatar(
-            name = state.value.currentUserName,
-            color = Color(0xFF40C4FF),
-            size = 60.dp,
-            shouldShowName = false
-        )
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                UserAvatar(
+                    name = state.value.currentUserName,
+                    color = Color.Red,
+                    size = 60.dp,
+                    shouldShowName = false
+                )
 
-        avatarPositions.forEach { avatarPos ->
-            UserAvatar(
-                name = avatarPos.name,
-                color = avatarPos.color,
-                size = 50.dp,
-                modifier = Modifier
-                    .offset(avatarPos.x.dp, avatarPos.y.dp)
-                    .size(60.dp)
+                Spacer(modifier = Modifier.height(16.dp))
+
+
+                if (state.value.discoveredDevices.isNotEmpty()) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF2A2A2A)
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Nearby Devices",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(state.value.discoveredDevices) { device ->
+                                    DeviceItem(
+                                        device = device,
+                                        onClick = { viewModel.onEvent(SendOrReceiveEvents.OnDeviceSelected(device)) }
+                                    )
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+            }
+            FileShareControls(
+                connectionState = state.value.connectionState,
+                isAdvertising = state.value.isAdvertising,
+                isDiscovering = state.value.isDiscovering,
+                onReceiverClick = { viewModel.onEvent(SendOrReceiveEvents.OnReceiverClick) },
+                onSenderClick = { viewModel.onEvent(SendOrReceiveEvents.OnSenderClick) },
+                onStopAdvertising = { viewModel.onEvent(SendOrReceiveEvents.OnStopAdvertising) },
+                onStopDiscovery = { viewModel.onEvent(SendOrReceiveEvents.OnStopDiscovery) }
             )
+
+            if (state.value.connectionState == ConnectionState.CONNECTED) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // File picker
+                    FilePicker(
+                        onFileSelected = { file ->
+                            viewModel.onEvent(SendOrReceiveEvents.OnFilesSelected(listOf(file)))
+                        }
+                    )
+
+                    // Selected files
+                    if (state.value.selectedFiles.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF2A2A2A)
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "Selected Files",
+                                    color = Color.White,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                LazyColumn(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    items(state.value.selectedFiles) { file ->
+                                        Card(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = Color(0xFF1A1A1A)
+                                            )
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(12.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(
+                                                    text = file.fileName,
+                                                    color = Color.White,
+                                                    fontSize = 14.sp,
+                                                    modifier = Modifier.weight(1f)
+                                                )
+
+                                                Text(
+                                                    text = formatFileSize(file.fileSize),
+                                                    color = Color(0xFF9E9E9E),
+                                                    fontSize = 12.sp
+                                                )
+
+                                                Spacer(modifier = Modifier.width(8.dp))
+
+                                                IconButton(
+                                                    onClick = { viewModel.onEvent(SendOrReceiveEvents.OnRemoveFile(file)) }
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Close,
+                                                        contentDescription = "Remove",
+                                                        tint = Color(0xFFFF5722),
+                                                        modifier = Modifier.size(20.dp)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
         }
+
+//        UserAvatar(
+//            name = state.value.currentUserName,
+//            color = Color(0xFF40C4FF),
+//            size = 60.dp,
+//            shouldShowName = false
+//        )
+//
+//        avatarPositions.forEach { avatarPos ->
+//            UserAvatar(
+//                name = avatarPos.name,
+//                color = avatarPos.color,
+//                size = 50.dp,
+//                modifier = Modifier
+//                    .offset(avatarPos.x.dp, avatarPos.y.dp)
+//                    .size(60.dp)
+//            )
+//        }
     }
 }
 
