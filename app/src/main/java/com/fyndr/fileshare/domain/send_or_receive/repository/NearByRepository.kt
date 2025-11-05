@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface NearByRepository {
     val discoveredDevices: Flow<List<DiscoveredDevice>>
     val connectionState: Flow<ConnectionState>
-    val transferProgress: Flow<TransferProgress>
+    val transferProgress: Flow<TransferProgress?>
 
     suspend fun startAdvertising(serviceId: String, deviceName: String)
     suspend fun stopAdvertising()

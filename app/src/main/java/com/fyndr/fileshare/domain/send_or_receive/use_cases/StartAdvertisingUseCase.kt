@@ -1,0 +1,13 @@
+package com.fyndr.fileshare.domain.send_or_receive.use_cases
+
+import com.fyndr.fileshare.domain.send_or_receive.repository.NearByRepository
+import javax.inject.Inject
+
+class StartAdvertisingUseCase @Inject constructor(
+    private val nearbyRepository: NearByRepository
+) {
+    suspend operator fun invoke(deviceName: String) {
+        nearbyRepository.startAdvertising("com.fyndr.fileshare.SERVICE_ID", deviceName)
+    }
+}
+

@@ -2,8 +2,13 @@ package com.fyndr.fileshare.presentation.send_or_receive
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fyndr.fileshare.data.transfer.local.entity.FileTransferEntity
 import com.fyndr.fileshare.domain.send_or_receive.models.ConnectionState
+import com.fyndr.fileshare.domain.send_or_receive.models.TransferState
+import com.fyndr.fileshare.domain.send_or_receive.repository.NearByRepository
 import com.fyndr.fileshare.domain.send_or_receive.use_cases.GetUserDetailsUseCase
+import com.fyndr.fileshare.domain.send_or_receive.use_cases.NearbyUseCases
+import com.fyndr.fileshare.domain.transfer.use_cases.FileTransferUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +20,8 @@ import javax.inject.Inject
 class SendOrReceiveViewModel @Inject constructor(
     private val userDetailsUseCase: GetUserDetailsUseCase,
     private val nearbyUseCases: NearbyUseCases,
-    private val transferUseCases: TransferUseCases,
-    private val nearbyRepository: NearbyRepository
+    private val transferUseCases: FileTransferUseCases,
+    private val nearbyRepository: NearByRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(SendOrReceiveScreenStates())
     val state = _state.asStateFlow()
@@ -53,7 +58,16 @@ class SendOrReceiveViewModel @Inject constructor(
                     isAdvertising = connectionState == ConnectionState.ADVERTISING,
                     isDiscovering = connectionState == ConnectionState.DISCOVERING
                 )
-            }
+            }/*.collect { newState ->
+                _state.value = _state.value.copy(
+                    discoveredDevices = newState.discoveredDevices,
+                    connectionState = newState.connectionState,
+                    currentTransfer = newState.currentTransfer,
+                    isAdvertising = newState.isAdvertising,
+                    isDiscovering = newState.isDiscovering
+                )
+
+            }*/
         }
     }
 
@@ -63,22 +77,54 @@ class SendOrReceiveViewModel @Inject constructor(
                 print("Receiver Clicked")
             }
 
-            SendOrReceiveEvents.OnClearError -> TODO()
-            is SendOrReceiveEvents.OnDeviceSelected -> TODO()
-            SendOrReceiveEvents.OnDisconnect -> TODO()
-            is SendOrReceiveEvents.OnFilesSelected -> TODO()
-            SendOrReceiveEvents.OnHideDeviceList -> TODO()
-            SendOrReceiveEvents.OnHideFilePicker -> TODO()
-            is SendOrReceiveEvents.OnRemoveFile -> TODO()
-            SendOrReceiveEvents.OnRequestPermissions -> TODO()
-            is SendOrReceiveEvents.OnSendFile -> TODO()
-            SendOrReceiveEvents.OnSenderClick -> TODO()
-            SendOrReceiveEvents.OnShowDeviceList -> TODO()
-            SendOrReceiveEvents.OnShowFilePicker -> TODO()
-            SendOrReceiveEvents.OnStartAdvertising -> TODO()
-            SendOrReceiveEvents.OnStartDiscovery -> TODO()
-            SendOrReceiveEvents.OnStopAdvertising -> TODO()
-            SendOrReceiveEvents.OnStopDiscovery -> TODO()
+            SendOrReceiveEvents.OnClearError -> {
+                _state.value = _state.value.copy(errorMessage = null)
+            }
+            is SendOrReceiveEvents.OnDeviceSelected -> {
+                connectToDevice(events.device)
+            }
+            SendOrReceiveEvents.OnDisconnect -> {
+                disconnect()
+            }
+            is SendOrReceiveEvents.OnFilesSelected -> {
+                _state.value = _state.value.copy(selectedFiles = events.files)
+            }
+            SendOrReceiveEvents.OnHideDeviceList -> {
+                _state.value = _state.value.copy(showDeviceList = false)
+            }
+            SendOrReceiveEvents.OnHideFilePicker -> {
+                _state.value = _state.value.copy(showFilePicker = false)
+            }
+            is SendOrReceiveEvents.OnRemoveFile -> {
+                removeFile(events.file)
+            }
+            SendOrReceiveEvents.OnRequestPermissions -> {
+                requestPermissions()
+            }
+            is SendOrReceiveEvents.OnSendFile -> {
+                sendFile(events.device, events.file)
+            }
+            SendOrReceiveEvents.OnSenderClick -> {
+                startDiscovery()
+            }
+            SendOrReceiveEvents.OnShowDeviceList -> {
+                _state.value = _state.value.copy(showDeviceList = true)
+            }
+            SendOrReceiveEvents.OnShowFilePicker -> {
+                _state.value = _state.value.copy(showFilePicker = true)
+            }
+            SendOrReceiveEvents.OnStartAdvertising -> {
+                startAdvertising()
+            }
+            SendOrReceiveEvents.OnStartDiscovery -> {
+                startDiscovery()
+            }
+            SendOrReceiveEvents.OnStopAdvertising -> {
+                stopAdvertising()
+            }
+            SendOrReceiveEvents.OnStopDiscovery -> {
+                stopDiscovery()
+            }
         }
 
     }
@@ -138,7 +184,7 @@ class SendOrReceiveViewModel @Inject constructor(
         }
     }
 
-    private fun connectToDevice(device: com.fyndr.fileshare.domain.nearby.models.DiscoveredDevice) {
+    private fun connectToDevice(device: com.fyndr.fileshare.domain.send_or_receive.models.DiscoveredDevice) {
         viewModelScope.launch {
             try {
                 _state.value = _state.value.copy(isLoading = true, errorMessage = null)
@@ -165,7 +211,7 @@ class SendOrReceiveViewModel @Inject constructor(
         }
     }
 
-    private fun sendFile(device: com.fyndr.fileshare.domain.nearby.models.DiscoveredDevice, file: com.fyndr.fileshare.domain.nearby.models.FileTransferInfo) {
+    private fun sendFile(device: com.fyndr.fileshare.domain.send_or_receive.models.DiscoveredDevice, file: com.fyndr.fileshare.domain.send_or_receive.models.FileTransferInfo) {
         viewModelScope.launch {
             try {
                 _state.value = _state.value.copy(isLoading = true, errorMessage = null)
@@ -181,7 +227,7 @@ class SendOrReceiveViewModel @Inject constructor(
                     deviceId = device.endpointId,
                     transferState = TransferState.PENDING,
                     isIncoming = false,
-                    timestamp = System.currentTimeMillis()
+                    timeStamp = System.currentTimeMillis()
                 )
                 transferUseCases.saveTransfer(transferEntity)
 
@@ -198,7 +244,7 @@ class SendOrReceiveViewModel @Inject constructor(
         }
     }
 
-    private fun removeFile(file: com.fyndr.fileshare.domain.nearby.models.FileTransferInfo) {
+    private fun removeFile(file: com.fyndr.fileshare.domain.send_or_receive.models.FileTransferInfo) {
         val currentFiles = _state.value.selectedFiles.toMutableList()
         currentFiles.remove(file)
         _state.value = _state.value.copy(selectedFiles = currentFiles)
